@@ -1,0 +1,1486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DataLens — Analysis Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#0b0f1a;
+  --surface:#111827;
+  --surface2:#1a2235;
+  --surface3:#1f2d43;
+  --border:rgba(99,130,190,0.15);
+  --border2:rgba(99,130,190,0.25);
+  --accent:#4f8ef7;
+  --accent2:#7c5cfc;
+  --accent3:#00d4aa;
+  --warn:#f5a524;
+  --danger:#f04444;
+  --success:#22c55e;
+  --text:#e2e8f7;
+  --text2:#8898b8;
+  --text3:#4a5878;
+  --ink:#0b0f1a;
+  --radius:10px;
+  --font:'Space Grotesk',sans-serif;
+  --mono:'Space Mono',monospace;
+}
+body.light {
+  --bg:#f0f4fc;
+  --surface:#ffffff;
+  --surface2:#f8faff;
+  --surface3:#eef2fb;
+  --border:rgba(80,110,200,0.12);
+  --border2:rgba(80,110,200,0.22);
+  --text:#1a2240;
+  --text2:#4a5878;
+  --text3:#8898b8;
+  --ink:#ffffff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;transition:background 0.3s,color 0.3s;}
+button,input,select,textarea{font:inherit;}
+button{border:0;cursor:pointer;background:none;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px;}
+
+/* ───── TOP BAR ───── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(11,15,26,0.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border2);
+  padding:0 24px;
+}
+body.light .topbar{background:rgba(240,244,252,0.94);}
+.topbar-inner{
+  max-width:1440px;margin:0 auto;
+  height:58px;
+  display:flex;align-items:center;gap:16px;
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.logo-mark{
+  width:34px;height:34px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:grid;place-items:center;
+  font-weight:700;font-size:14px;color:#fff;
+  box-shadow:0 4px 14px rgba(79,142,247,0.35);
+}
+.logo-text{font-size:15px;font-weight:700;color:var(--text);}
+.logo-sub{font-size:10px;color:var(--text3);font-weight:400;}
+.nav-tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;padding:8px 0;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-btn{
+  height:34px;padding:0 13px;border-radius:7px;
+  font-size:12.5px;font-weight:500;color:var(--text2);
+  white-space:nowrap;transition:all 0.18s;
+  display:flex;align-items:center;gap:6px;
+}
+.nav-btn:hover{background:var(--surface2);color:var(--text);}
+.nav-btn.active{background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(79,142,247,0.3);}
+.nav-btn .nb{font-family:var(--mono);font-size:10px;opacity:0.7;}
+.topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.icon-btn{
+  width:34px;height:34px;border-radius:8px;
+  display:grid;place-items:center;
+  color:var(--text2);font-size:16px;
+  transition:all 0.15s;border:1px solid var(--border);
+}
+.icon-btn:hover{color:var(--text);border-color:var(--border2);background:var(--surface2);}
+
+/* ───── SHELL ───── */
+.shell{max-width:1440px;margin:0 auto;padding:0 24px;}
+
+/* ───── HERO ───── */
+.hero{padding:40px 0 28px;}
+.hero-grid{display:grid;grid-template-columns:1fr minmax(0,440px);gap:40px;align-items:center;}
+.hero-eyebrow{
+  font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.hero-eyebrow::before{content:'';width:24px;height:2px;background:var(--accent);border-radius:2px;}
+.hero h1{
+  font-size:clamp(34px,5vw,62px);font-weight:700;line-height:1.05;
+  margin-bottom:16px;
+  background:linear-gradient(135deg,var(--text) 0%,var(--accent) 60%,var(--accent2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-desc{font-size:15.5px;line-height:1.65;color:var(--text2);max-width:540px;margin-bottom:28px;}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.btn{
+  height:40px;padding:0 18px;border-radius:8px;
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13.5px;font-weight:600;
+  transition:all 0.2s;text-decoration:none;white-space:nowrap;
+}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 16px rgba(79,142,247,0.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,142,247,0.4);}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+.btn-danger{background:rgba(240,68,68,0.12);color:var(--danger);border:1px solid rgba(240,68,68,0.25);}
+.btn-danger:hover{background:rgba(240,68,68,0.2);}
+.file-btn{position:relative;overflow:hidden;}
+.file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.column-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;}
+.pill{
+  height:26px;padding:0 10px;border-radius:999px;
+  font-size:11.5px;font-weight:600;
+  background:var(--surface2);color:var(--text2);
+  border:1px solid var(--border);
+}
+.pill.num{border-color:rgba(79,142,247,0.3);color:var(--accent);background:rgba(79,142,247,0.08);}
+.pill.cat{border-color:rgba(0,212,170,0.3);color:var(--accent3);background:rgba(0,212,170,0.08);}
+
+/* ───── METRIC STRIP ───── */
+.metrics{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;margin-bottom:30px;
+}
+.metric{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;
+  transition:border-color 0.2s;
+}
+.metric:hover{border-color:var(--border2);}
+.metric-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;}
+.metric-val{font-size:26px;font-weight:700;font-family:var(--mono);color:var(--text);line-height:1;}
+.metric-val.warn{color:var(--warn);}
+.metric-val.good{color:var(--success);}
+.metric-val.info{color:var(--accent);}
+
+/* ───── HERO CANVAS ───── */
+.hero-visual{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:14px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.25);
+}
+.hero-visual canvas{display:block;width:100%;height:320px;}
+
+/* ───── PANELS ───── */
+.panel{display:none;animation:fadeUp 0.22s ease;}
+.panel.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.panel-header{
+  padding:18px 22px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:var(--surface);
+}
+.panel-header-left{display:flex;align-items:center;gap:14px;}
+.panel-icon{
+  width:38px;height:38px;border-radius:9px;
+  display:grid;place-items:center;font-size:18px;flex-shrink:0;
+}
+.pi-blue{background:rgba(79,142,247,0.15);}
+.pi-purple{background:rgba(124,92,252,0.15);}
+.pi-teal{background:rgba(0,212,170,0.15);}
+.pi-amber{background:rgba(245,165,36,0.15);}
+.pi-rose{background:rgba(240,68,68,0.15);}
+.panel-title{font-size:16px;font-weight:700;}
+.panel-desc{font-size:12.5px;color:var(--text2);margin-top:2px;}
+.panel-body{padding:22px;background:var(--surface2);}
+
+/* ───── CARDS ───── */
+.card-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;}
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px;
+  min-width:0;
+}
+.card.span-3{grid-column:span 3;}
+.card.span-4{grid-column:span 4;}
+.card.span-6{grid-column:span 6;}
+.card.span-8{grid-column:span 8;}
+.card.span-9{grid-column:span 9;}
+.card.span-12{grid-column:span 12;}
+.card-title{font-size:13px;font-weight:700;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:8px;}
+.card-title::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--accent);flex-shrink:0;}
+
+/* ───── FORM ELEMENTS ───── */
+.field-row{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:12px;}
+.field-row.cols3{grid-template-columns:repeat(3,minmax(0,1fr));}
+.field-row.full{grid-template-columns:1fr;}
+.field{display:grid;gap:5px;}
+.field label{font-size:11.5px;font-weight:600;color:var(--text3);}
+select,input[type=number],input[type=text],textarea{
+  width:100%;height:36px;
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:7px;color:var(--text);padding:0 10px;
+  font-size:13px;transition:border-color 0.15s;
+}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--accent);}
+textarea{height:80px;resize:vertical;padding:8px 10px;font-family:var(--mono);font-size:12px;}
+.mini-btns{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;}
+.mbtn{
+  height:32px;padding:0 12px;border-radius:7px;
+  font-size:12.5px;font-weight:600;
+  background:var(--surface3);color:var(--text);border:1px solid var(--border);
+  transition:all 0.15s;display:inline-flex;align-items:center;gap:6px;
+}
+.mbtn:hover{border-color:var(--accent);color:var(--accent);background:rgba(79,142,247,0.08);}
+.mbtn.primary{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 3px 10px rgba(79,142,247,0.25);}
+.mbtn.primary:hover{background:#3a7af0;}
+.mbtn.success{background:rgba(34,197,94,0.12);color:var(--success);border-color:rgba(34,197,94,0.25);}
+.mbtn.danger{background:rgba(240,68,68,0.1);color:var(--danger);border-color:rgba(240,68,68,0.25);}
+.mbtn.danger:hover{background:rgba(240,68,68,0.18);}
+
+/* ───── TABLES ───── */
+.table-wrap{max-width:100%;overflow:auto;border:1px solid var(--border);border-radius:8px;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+th{background:var(--surface3);color:var(--text2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:9px 11px;text-align:left;position:sticky;top:0;z-index:1;}
+td{padding:8px 11px;border-top:1px solid var(--border);color:var(--text);vertical-align:top;}
+tr:last-child td{border-bottom:0;}
+tr:hover td{background:var(--surface2);}
+td.num{font-family:var(--mono);font-size:12px;color:var(--accent);}
+td.good{color:var(--success);}
+td.warn{color:var(--warn);}
+td.danger{color:var(--danger);}
+
+/* ───── ALERTS ───── */
+.alert{border-radius:8px;padding:11px 14px;font-size:13px;line-height:1.5;margin-top:10px;}
+.alert-info{background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.2);color:var(--accent);}
+.alert-warn{background:rgba(245,165,36,0.1);border:1px solid rgba(245,165,36,0.25);color:var(--warn);}
+.alert-success{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:var(--success);}
+.alert-danger{background:rgba(240,68,68,0.1);border:1px solid rgba(240,68,68,0.25);color:var(--danger);}
+.result-box{
+  margin-top:14px;padding:14px;
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:8px;
+}
+.result-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px;}
+
+/* ───── CHARTS ───── */
+.chart-canvas{
+  width:100%;height:380px;display:block;
+  border-radius:8px;border:1px solid var(--border);background:var(--surface);
+}
+.chart-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.chart-canvas.tall{height:420px;}
+
+/* ───── BADGE ───── */
+.badge{
+  display:inline-flex;align-items:center;height:22px;
+  padding:0 8px;border-radius:5px;font-size:11.5px;font-weight:700;
+}
+.badge-sig{background:rgba(240,68,68,0.15);color:var(--danger);}
+.badge-ns{background:rgba(34,197,94,0.12);color:var(--success);}
+.badge-info{background:rgba(79,142,247,0.12);color:var(--accent);}
+.badge-warn{background:rgba(245,165,36,0.12);color:var(--warn);}
+
+/* ───── CLEANING LOG ───── */
+.log-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.log-tag{
+  height:24px;padding:0 9px;border-radius:999px;
+  font-size:11.5px;font-weight:500;
+  background:rgba(0,212,170,0.1);color:var(--accent3);
+  border:1px solid rgba(0,212,170,0.2);
+}
+
+/* ───── SECTION DIVIDER ───── */
+.section-divider{height:1px;background:var(--border);margin:20px 0;}
+.inline-note{font-size:12px;color:var(--text2);line-height:1.55;margin-top:10px;}
+
+/* ───── RESPONSIVE ───── */
+@media(max-width:1024px){
+  .hero-grid{grid-template-columns:1fr;}
+  .hero-visual{display:none;}
+  .metrics{grid-template-columns:repeat(3,1fr);}
+  .card.span-3,.card.span-4,.card.span-8,.card.span-9{grid-column:span 6;}
+  .card.span-6,.card.span-12{grid-column:span 12;}
+}
+@media(max-width:680px){
+  .shell{padding:0 14px;}
+  .metrics{grid-template-columns:repeat(2,1fr);}
+  .card.span-3,.card.span-4,.card.span-6,.card.span-8,.card.span-9,.card.span-12{grid-column:span 12;}
+  .chart-pair{grid-template-columns:1fr;}
+  .topbar{padding:0 14px;}
+  .field-row{grid-template-columns:1fr;}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="logo" href="#">
+      <div class="logo-mark">DL</div>
+      <div><div class="logo-text">DataLens</div><div class="logo-sub">Analysis Studio</div></div>
+    </a>
+    <nav class="nav-tabs" id="navTabs">
+      <button class="nav-btn active" data-tab="explore"><span class="nb">01</span> Explore</button>
+      <button class="nav-btn" data-tab="stats"><span class="nb">02</span> Statistics</button>
+      <button class="nav-btn" data-tab="viz"><span class="nb">03</span> Visualize</button>
+      <button class="nav-btn" data-tab="dist"><span class="nb">04</span> Distributions</button>
+      <button class="nav-btn" data-tab="normality"><span class="nb">05</span> Normality</button>
+      <button class="nav-btn" data-tab="zscore"><span class="nb">06</span> Z-score & CLT</button>
+      <button class="nav-btn" data-tab="tests"><span class="nb">07</span> Tests</button>
+    </nav>
+    <div class="topbar-right">
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">☀️</button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow">Statistical Analysis Tool</div>
+        <h1>DataLens<br>Studio</h1>
+        <p class="hero-desc">Upload any CSV, clean your data, run descriptive stats, visualize distributions, test normality, and compare groups with parametric and non-parametric methods — all in one page.</p>
+        <div class="hero-actions">
+          <label class="btn btn-primary file-btn">
+            📂 Upload CSV
+            <input type="file" id="csvFile" accept=".csv,text/csv"/>
+          </label>
+          <button class="btn btn-ghost" id="sampleBtn">▶ Load Sample Data</button>
+          <button class="btn btn-danger" id="clearBtn">✕ Clear Data</button>
+          <a class="btn btn-ghost" id="exportBtn" href="#" download="cleaned.csv">⬇ Export CSV</a>
+        </div>
+        <div class="column-pills" id="columnPills"></div>
+      </div>
+      <div class="hero-visual">
+        <canvas id="blueprintCanvas" width="880" height="320"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- METRICS -->
+  <div class="metrics">
+    <div class="metric"><div class="metric-label">Rows</div><div class="metric-val info" id="mRows">—</div></div>
+    <div class="metric"><div class="metric-label">Columns</div><div class="metric-val info" id="mCols">—</div></div>
+    <div class="metric"><div class="metric-label">Missing</div><div class="metric-val warn" id="mMissing">—</div></div>
+    <div class="metric"><div class="metric-label">Duplicates</div><div class="metric-val warn" id="mDups">—</div></div>
+    <div class="metric"><div class="metric-label">Numeric cols</div><div class="metric-val good" id="mNums">—</div></div>
+  </div>
+
+  <!-- ============================
+       SECTION 1 — EXPLORE
+  ============================= -->
+  <div class="panel active" id="explore">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-icon pi-blue">🔍</div>
+          <div>
+            <div class="panel-title">Data Loading & Cleaning</div>
+            <div class="panel-desc">CSV import, missing values, duplicates, and outlier removal</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="card-grid">
+          <!-- Quick tools -->
+          <div class="card span-4">
+            <div class="card-title">Data Quality Tools</div>
+            <div class="field-row full">
+              <div class="field"><label>Fill missing values with</label>
+                <select id="fillMethod">
+                  <option value="mean">Mean (numeric) / Mode (category)</option>
+                  <option value="median">Median / Mode</option>
+                  <option value="zero">Zero / Mode</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row full">
+              <div class="field"><label>Remove outliers in column</label>
+                <select id="outlierCol"></select>
+              </div>
+            </div>
+            <div class="mini-btns">
+              <button class="mbtn primary" id="dedupeBtn">Remove Duplicates</button>
+              <button class="mbtn success" id="fillBtn">Fill Missing</button>
+              <button class="mbtn" id="removeOutBtn">Remove IQR Outliers</button>
+            </div>
+            <div class="log-tags" id="cleanLog"></div>
+          </div>
+          <!-- Missing analysis -->
+          <div class="card span-4">
+            <div class="card-title">Missing Value Analysis</div>
+            <div class="table-wrap" id="missingTable"></div>
+          </div>
+          <!-- Column types -->
+          <div class="card span-4">
+            <div class="card-title">Column Types</div>
+            <div class="table-wrap" id="typeTable"></div>
+          </div>
+          <!-- Dataset preview -->
+          <div class="card span-12">
+            <div class="card-title">Dataset Preview <span style="font-size:11px;color:var(--text3);font-weight:400">(first 10 rows)</span></div>
+            <div class="table-wrap" id="previewTable"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SECTION 2 — STATISTICS
+  ============================= -->
+  <div class="panel" id="stats">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-icon pi-purple">📊</div>
+          <div>
+            <div class="panel-title">Descriptive Statistics</div>
+            <div class="panel-desc">Mean, median, SD, IQR, skewness, kurtosis, and frequency tables</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="card-grid">
+          <div class="card span-8">
+            <div class="card-title">Numeric Summary</div>
+            <div class="table-wrap" id="summaryTable"></div>
+          </div>
+          <div class="card span-4">
+            <div class="card-title">Categorical Frequency</div>
+            <div class="field-row full"><div class="field"><label>Select column</label><select id="freqCol"></select></div></div>
+            <div class="table-wrap" id="freqTable" style="margin-top:10px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SECTION 3 — VISUALIZE
+  ============================= -->
+  <div class="panel" id="viz">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-icon pi-teal">📈</div>
+          <div>
+            <div class="panel-title">Data Visualization</div>
+            <div class="panel-desc">Histogram, boxplot, scatter, and bar charts with axis labels</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="card-grid">
+          <div class="card span-4">
+            <div class="card-title">Chart Controls</div>
+            <div class="field-row full"><div class="field"><label>Chart type</label>
+              <select id="chartType">
+                <option value="hist">Histogram</option>
+                <option value="box">Boxplot</option>
+                <option value="scatter">Scatter plot</option>
+                <option value="bar">Bar chart</option>
+              </select>
+            </div></div>
+            <div class="field-row">
+              <div class="field"><label>X column</label><select id="xCol"></select></div>
+              <div class="field"><label>Y column</label><select id="yCol"></select></div>
+            </div>
+            <div class="field-row full"><div class="field"><label>Group column (optional)</label><select id="groupCol"></select></div></div>
+            <div class="inline-note">Histogram & boxplot use X column. Scatter uses X and Y. Bar chart uses X (category) and Y (numeric).</div>
+          </div>
+          <div class="card span-8">
+            <div class="card-title" id="vizTitle">Chart</div>
+            <canvas class="chart-canvas tall" id="vizCanvas" width="900" height="500"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SECTION 4 — DISTRIBUTIONS
+  ============================= -->
+  <div class="panel" id="dist">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-icon pi-amber">🎲</div>
+          <div>
+            <div class="panel-title">Probability Distributions</div>
+            <div class="panel-desc">PMF/PDF, CDF, parameter fitting, and empirical rule</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="card-grid">
+          <div class="card span-4">
+            <div class="card-title">Distribution Controls</div>
+            <div class="field-row">
+              <div class="field"><label>Distribution</label>
+                <select id="distType">
+                  <option value="normal">Normal</option>
+                  <option value="exponential">Exponential</option>
+                  <option value="uniform">Uniform</option>
+                  <option value="binomial">Binomial</option>
+                  <option value="bernoulli">Bernoulli</option>
+                  <option value="poisson">Poisson</option>
+                </select>
+              </div>
+              <div class="field"><label>Compare with column</label><select id="distCol"></select></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Parameter A</label><input id="distA" type="number" step="0.01" value="75"/></div>
+              <div class="field"><label>Parameter B</label><input id="distB" type="number" step="0.01" value="8"/></div>
+            </div>
+            <div class="mini-btns">
+              <button class="mbtn primary" id="fitDistBtn">Fit from Data</button>
+              <button class="mbtn" id="drawDistBtn">Draw</button>
+            </div>
+            <div class="alert alert-info" style="margin-top:12px;font-size:12px;">Normal: mean & SD · Exponential: rate · Uniform: min & max · Binomial: n & p · Poisson: λ</div>
+            <div style="margin-top:14px;" id="empiricalRule"></div>
+            <div style="margin-top:10px;" id="fitTable"></div>
+          </div>
+          <div class="card span-8">
+            <div class="card-title">PDF/PMF and CDF</div>
+            <div class="chart-pair">
+              <canvas class="chart-canvas" id="pdfCanvas" width="600" height="400"></canvas>
+              <canvas class="chart-canvas" id="cdfCanvas" width="600" height="400"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SECTION 5 — NORMALITY
+  ============================= -->
+  <div class="panel" id="normality">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-icon pi-rose">🔬</div>
+          <div>
+            <div class="panel-title">Normality Testing</div>
+            <div class="panel-desc">Shapiro-Wilk, Kolmogorov-Smirnov, Anderson-Darling, fitted curve, Q-Q plot</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="card-grid">
+          <div class="card span-4">
+            <div class="card-title">Test Controls</div>
+            <div class="field-row full"><div class="field"><label>Numeric column</label><select id="normCol"></select></div></div>
+            <div class="mini-btns"><button class="mbtn primary" id="runNormBtn">Run Normality Tests</button></div>
+            <div class="alert alert-warn" style="margin-top:12px;font-size:12px;">p &lt; 0.05 → evidence against normality. Both fitted histogram and Q-Q plot are required.</div>
+            <div style="margin-top:14px;" id="normTable"></div>
+          </div>
+          <div class="card span-8">
+            <div class="card-title">Normality Plots</div>
+            <div class="chart-pair">
+              <canvas class="chart-canvas" id="normHistCanvas" width="600" height="400"></canvas>
+              <canvas class="chart-canvas" id="qqCanvas" width="600" height="400"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SECTION 6 — Z-SCORE & CLT
+  ============================= -->
+  <div class="panel" id="zscore">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-icon pi-blue">📐</div>
+          <div>
+            <div class="panel-title">Z-score & Central Limit Theorem</div>
+            <div class="panel-desc">Standardize values and simulate sampling distributions</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="card-grid">
+          <div class="card span-4">
+            <div class="card-title">Z-score Calculator</div>
+            <div class="field-row">
+              <div class="field"><label>Column</label><select id="zCol"></select></div>
+              <div class="field"><label>Value to standardize</label><input id="zVal" type="number" step="0.01" value="80"/></div>
+            </div>
+            <div class="mini-btns"><button class="mbtn primary" id="calcZBtn">Calculate</button></div>
+            <div id="zResult"></div>
+          </div>
+          <div class="card span-4">
+            <div class="card-title">CLT Simulation</div>
+            <div class="field-row full"><div class="field"><label>Source column</label><select id="cltCol"></select></div></div>
+            <div class="field-row">
+              <div class="field"><label>Sample size (n)</label><input id="cltN" type="number" min="2" max="200" value="12"/></div>
+              <div class="field"><label>Num samples</label><input id="cltSamples" type="number" min="100" max="5000" value="1000"/></div>
+            </div>
+            <div class="mini-btns"><button class="mbtn primary" id="runCltBtn">Run CLT</button></div>
+          </div>
+          <div class="card span-12">
+            <div class="card-title">Sampling Distribution of Sample Means</div>
+            <canvas class="chart-canvas tall" id="cltCanvas" width="1000" height="440"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SECTION 7 — TESTS
+  ============================= -->
+  <div class="panel" id="tests">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-icon pi-purple">🧪</div>
+          <div>
+            <div class="panel-title">Hypothesis Tests</div>
+            <div class="panel-desc">Parametric (t, z, chi-square, ANOVA) and non-parametric (Mann-Whitney, Wilcoxon, Kruskal-Wallis, Friedman)</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="card-grid">
+          <!-- Parametric -->
+          <div class="card span-6">
+            <div class="card-title">Parametric Tests</div>
+            <div class="field-row full"><div class="field"><label>Test</label>
+              <select id="paramTest">
+                <option value="oneT">One-sample t-test</option>
+                <option value="twoT">Two-sample t-test</option>
+                <option value="pairedT">Paired t-test</option>
+                <option value="oneZ">One-sample z-test</option>
+                <option value="chiGood">Chi-square goodness of fit</option>
+                <option value="chiInd">Chi-square independence</option>
+                <option value="anova">One-way ANOVA + Levene</option>
+              </select>
+            </div></div>
+            <div class="field-row">
+              <div class="field"><label>Numeric column</label><select id="testNum"></select></div>
+              <div class="field"><label>Group / category</label><select id="testGroup"></select></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Second column</label><select id="testSecond"></select></div>
+              <div class="field"><label>Hyp. mean (μ₀)</label><input id="testMu" type="number" step="0.01" value="70"/></div>
+            </div>
+            <div class="field-row"><div class="field"><label>Pop. SD (z-test)</label><input id="testSigma" type="number" step="0.01" value="10"/></div>
+            <div class="field"><label>Friedman columns (CSV)</label><input id="friedmanCols" type="text" placeholder="col1, col2, col3"/></div></div>
+            <div class="mini-btns"><button class="mbtn primary" id="runParamBtn">Run Test</button></div>
+            <div id="paramResult"></div>
+          </div>
+          <!-- Non-parametric -->
+          <div class="card span-6">
+            <div class="card-title">Non-Parametric Tests</div>
+            <div class="field-row full"><div class="field"><label>Test</label>
+              <select id="npTest">
+                <option value="mann">Mann-Whitney U</option>
+                <option value="wilcoxon">Wilcoxon signed-rank</option>
+                <option value="kruskal">Kruskal-Wallis</option>
+                <option value="friedman">Friedman test</option>
+              </select>
+            </div></div>
+            <div class="field-row">
+              <div class="field"><label>Numeric column</label><select id="npNum"></select></div>
+              <div class="field"><label>Group column</label><select id="npGroup"></select></div>
+            </div>
+            <div class="field-row full"><div class="field"><label>Second column</label><select id="npSecond"></select></div></div>
+            <div class="mini-btns"><button class="mbtn primary" id="runNpBtn">Run Test</button></div>
+            <div id="npResult"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end shell -->
+
+<div style="height:60px;"></div>
+
+<script>
+// ============================================================
+//  DATA ANALYSIS STUDIO — DATALENS
+//  Complete statistical toolkit
+// ============================================================
+
+const SAMPLE = `id,study_hours,sleep_hours,score,method,group,before,after,stress,absences
+1,7.2,8.1,88,Practice,A,75,87,20,1
+2,4.8,6.9,72,Video,B,65,71,29,3
+3,5.5,7.4,79,Reading,C,66,78,24,2
+4,8.1,7.8,92,Practice,A,78,91,18,0
+5,3.2,6.1,61,Reading,B,58,60,38,5
+6,6.7,7.2,85,Video,C,71,84,22,1
+7,9.0,8.3,96,Practice,A,82,95,15,0
+8,4.3,6.5,68,Reading,B,62,67,33,4
+9,5.7,8.4,81,Video,C,69,80,22,1
+10,3.9,6.1,66,Reading,A,61,65,38,4
+11,6.2,7.8,85,Practice,B,74,84,19,1
+12,5.4,7.3,78,Video,C,68,77,25,2
+13,4.1,6.5,70,Reading,A,63,69,31,3
+14,7.8,7.1,91,Practice,C,75,90,17,0
+15,3.5,5.9,64,Reading,B,60,63,40,5
+16,6.0,7.6,82,Video,A,70,81,21,1
+17,5.1,,77,Video,B,67,76,26,2
+18,4.4,6.7,,Reading,C,62,68,34,4
+19,8.5,7.9,95,Practice,A,80,94,15,0
+20,2.8,5.7,62,Reading,B,59,62,43,5
+21,6.8,8.0,87,Practice,C,72,86,18,1
+22,5.9,7.4,80,Video,B,69,79,23,2
+23,4.7,6.8,73,Reading,A,65,72,30,3
+24,7.4,7.7,90,Practice,B,76,89,17,0
+25,3.1,6.2,65,Reading,C,60,64,39,4
+26,6.6,7.0,86,Video,A,72,85,20,1
+27,5.3,6.4,79,Video,C,68,78,24,2
+28,4.0,7.1,69,Reading,B,62,68,33,3
+29,7.9,8.2,93,Practice,A,79,92,16,0
+30,3.6,5.8,63,Reading,C,59,63,41,5`;
+
+let rows=[], columns=[], colInfo={}, cleanLog=[];
+
+const $ = id => document.getElementById(id);
+const fmt = (x,d=4) => Number.isFinite(x) ? +x.toFixed(d) : '';
+const isMissing = v => v===null||v===undefined||String(v).trim()==='';
+const numVals = col => rows.map(r=>Number(r[col])).filter(Number.isFinite);
+
+// ─── CSV parser ───
+function parseCSV(txt){
+  const out=[]; let row=[],cell='',q=false;
+  for(let i=0;i<txt.length;i++){
+    const ch=txt[i],nx=txt[i+1];
+    if(ch==='"'&&q&&nx==='"'){cell+='"';i++;}
+    else if(ch==='"'){q=!q;}
+    else if(ch===','&&!q){row.push(cell);cell='';}
+    else if((ch==='\n'||ch==='\r')&&!q){
+      if(ch==='\r'&&nx==='\n')i++;
+      row.push(cell);
+      if(row.some(v=>v.trim()))out.push(row);
+      row=[];cell='';
+    }else cell+=ch;
+  }
+  row.push(cell);
+  if(row.some(v=>v.trim()))out.push(row);
+  if(!out.length)return{columns:[],rows:[]};
+  const headers=out[0].map((h,i)=>(h||`col_${i+1}`).trim());
+  const drows=out.slice(1).map(cells=>{
+    const o={};headers.forEach((h,i)=>o[h]=(cells[i]??'').trim());return o;
+  });
+  return{columns:headers,rows:drows};
+}
+
+function toCSV(){
+  var esc=function(v){var s=v==null?"":String(v);if(/[",\n\r]/.test(s)){return '"'+s.split('"').join('\"\\"\"') + '"' ;}return s;};
+  var head=columns.map(esc).join(",");
+  var body=rows.map(function(r){return columns.map(function(c){return esc(r[c]);}).join(",");});
+  return [head].concat(body).join("\n");
+}
+
+function detectCols(){
+  colInfo={};
+  columns.forEach(c=>{
+    const present=rows.map(r=>r[c]).filter(v=>!isMissing(v));
+    const nums=present.map(Number).filter(Number.isFinite);
+    colInfo[c]={type:present.length&&nums.length/present.length>=0.85?'numeric':'categorical',
+      present:present.length,missing:rows.length-present.length,unique:new Set(present.map(String)).size};
+  });
+}
+const numCols=()=>columns.filter(c=>colInfo[c]?.type==='numeric');
+const catCols=()=>columns.filter(c=>colInfo[c]?.type!=='numeric');
+
+function loadData(csv,msg='Dataset loaded'){
+  const p=parseCSV(csv);rows=p.rows;columns=p.columns;cleanLog=[msg];
+  detectCols();renderAll();
+}
+
+function clearData(){
+  rows=[];columns=[];colInfo={};cleanLog=['Data cleared'];renderAll();
+}
+
+// ─── Stats helpers ───
+const sum=a=>a.reduce((s,v)=>s+v,0);
+const mean=a=>a.length?sum(a)/a.length:0;
+const variance=a=>{const m=mean(a);return a.length>1?sum(a.map(v=>(v-m)**2))/(a.length-1):0;};
+const std=a=>Math.sqrt(variance(a));
+function median(a){const s=[...a].sort((x,y)=>x-y),n=s.length;return n?n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2:0;}
+function quantile(a,q){const s=[...a].sort((x,y)=>x-y),n=s.length,p=q*(n-1);const lo=Math.floor(p),hi=Math.ceil(p);return lo===hi?s[lo]:s[lo]+(s[hi]-s[lo])*(p-lo);}
+function mode(a){const f={};let best='',bv=0;a.forEach(v=>{if(!isMissing(v)){f[v]=(f[v]||0)+1;if(f[v]>bv){bv=f[v];best=v;}}});return best;}
+function skewness(a){const m=mean(a),s=std(a),n=a.length;return s?sum(a.map(v=>((v-m)/s)**3))*n/((n-1)*(n-2)):0;}
+function kurtosis(a){const m=mean(a),s=std(a),n=a.length;if(!s||n<4)return 0;const k4=sum(a.map(v=>((v-m)/s)**4));return n*(n+1)/((n-1)*(n-2)*(n-3))*k4 - 3*(n-1)**2/((n-2)*(n-3));}
+function lgamma(z){const c=[76.18009173,-86.50532033,24.01409824,-1.231739572,0.1208650973e-2,-0.5395239385e-5];let x=z+5.5,t=z+0.5,s=1.000000000190015;c.forEach((v,i)=>s+=v/(z+i+1));return Math.log(Math.sqrt(2*Math.PI))+Math.log(s)+(t-1)*Math.log(x)-x;}
+function normalCDF(z){const t=1/(1+0.2316419*Math.abs(z)),p=[0.319381530,-0.356563782,1.781477937,-1.821255978,1.330274429];const poly=t*(p[0]+t*(p[1]+t*(p[2]+t*(p[3]+t*p[4]))));const phi=Math.exp(-z*z/2)/Math.sqrt(2*Math.PI)*poly;return z>=0?1-phi:phi;}
+function tCDF(t,df){const x=df/(df+t*t);let ib=0,a=df/2,b=0.5;const lb=lgamma(a)+lgamma(b)-lgamma(a+b);let term=1;for(let i=0;i<200;i++){const xi=x*(i+1)/(i+a+b+1);term*=xi;ib+=term;}return 1-0.5*Math.exp(a*Math.log(x)+b*Math.log(1-x)-lb)/a;}
+function chi2CDF(x,k){if(x<=0)return 0;let s=0,term=1;for(let i=0;i<200;i++){if(i>0)term*=x/(k/2+i);s+=term;}return 1-Math.exp(-x/2+(k/2)*Math.log(x/2)-lgamma(k/2))*s;}
+function fCDF(f,d1,d2){if(f<=0)return 0;const x=d1*f/(d1*f+d2);let ib=0,a=d1/2,b=d2/2;const lb=lgamma(a)+lgamma(b)-lgamma(a+b);let term=1;for(let i=0;i<200;i++){const xi=x*(i+1)/(i+a+b+1);term*=xi;ib+=term;}return 1-Math.exp(a*Math.log(x)+b*Math.log(1-x)-lb)/a;}
+
+function groupsFrom(numCol,groupCol){
+  const g={};rows.forEach(r=>{const k=r[groupCol],v=Number(r[numCol]);if(!isMissing(k)&&Number.isFinite(v)){if(!g[k])g[k]=[];g[k].push(v);}});return g;
+}
+
+// ─── Chart instances ───
+const charts={};
+function getCtx(id){
+  const c=$$(id);if(!c)return null;
+  if(charts[id])charts[id].destroy();return c.getContext('2d');
+}
+const $$=id=>$(id);
+
+// ─── Color helpers ───
+const PALETTE=['#4f8ef7','#7c5cfc','#00d4aa','#f5a524','#f04444','#e96af8','#22c55e','#fb923c'];
+const isDark=()=>!document.body.classList.contains('light');
+const chartColor=()=>isDark()?'#e2e8f7':'#1a2240';
+const gridColor=()=>isDark()?'rgba(99,130,190,0.12)':'rgba(80,110,200,0.1)';
+const surfaceColor=()=>isDark()?'#111827':'#ffffff';
+
+function baseChartOpts(xlabel='',ylabel=''){
+  return{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:chartColor(),font:{family:'Space Grotesk',size:12}}},tooltip:{backgroundColor:isDark()?'#1f2d43':'#ffffff',titleColor:chartColor(),bodyColor:isDark()?'#8898b8':'#4a5878',borderColor:isDark()?'rgba(99,130,190,0.3)':'rgba(80,110,200,0.2)',borderWidth:1,cornerRadius:8}},
+    scales:{x:{grid:{color:gridColor()},ticks:{color:chartColor()},title:{display:!!xlabel,text:xlabel,color:chartColor(),font:{family:'Space Grotesk',weight:'600'}}},
+    y:{grid:{color:gridColor()},ticks:{color:chartColor()},title:{display:!!ylabel,text:ylabel,color:chartColor(),font:{family:'Space Grotesk',weight:'600'}}}}
+  };
+}
+
+// ─── HTML table helper ───
+function makeTable(headers,rowData,classes={}){
+  if(!headers.length||!rowData.length)return'<div class="alert alert-warn">No data</div>';
+  const ths=headers.map(h=>`<th>${h}</th>`).join('');
+  const trs=rowData.map(r=>`<tr>${headers.map(h=>{const v=r[h]??'';const cls=classes[h]?`class="${classes[h](v)}"`:''
+  ;return`<td ${cls}>${v}</td>`;}).join('')}</tr>`).join('');
+  return`<table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
+}
+
+function pClass(p){const n=Number(p);return n<0.001?'danger':n<0.05?'warn':'good';}
+
+// ─── Result box helper ───
+function resultBox(html){
+  return`<div class="result-box"><div class="result-label">Result</div>${html}</div>`;
+}
+function resultTable(rows){
+  const trs=rows.map(([k,v])=>`<tr><td style="color:var(--text2);font-size:12px;font-weight:600;">${k}</td><td class="num">${v}</td></tr>`).join('');
+  return`<table style="font-size:12.5px;">${trs}</table>`;
+}
+function sigBadge(p){const n=Number(p);return`<span class="badge ${n<=0.05?'badge-sig':'badge-ns'}">${n<=0.05?'Significant (p ≤ 0.05)':'Not Significant (p > 0.05)'}</span>`;}
+function conclusion(p){const n=Number(p);return`<div class="alert ${n<=0.05?'alert-danger':'alert-success'}" style="margin-top:8px;font-size:12px;">${n<=0.05?'Reject H₀ — statistically significant result.':'Fail to reject H₀ — no statistically significant evidence.'}</div>`;}
+
+// ─── Missing/dup counts ───
+function missingTotal(){return rows.reduce((s,r)=>s+columns.filter(c=>isMissing(r[c])).length,0);}
+function dupCount(){const seen=new Set();let d=0;rows.forEach(r=>{const k=JSON.stringify(columns.map(c=>r[c]));if(seen.has(k))d++;seen.add(k);});return d;}
+
+// ─── Populate selects ───
+function fillSel(id,cols,pref,allowNone=false){
+  const s=$(id);if(!s)return;
+  const old=s.value;s.innerHTML='';
+  if(allowNone){const o=document.createElement('option');o.value='';o.textContent='— none —';s.appendChild(o);}
+  cols.forEach(c=>{const o=document.createElement('option');o.value=o.textContent=c;s.appendChild(o);});
+  if(cols.includes(old))s.value=old;
+  else if(pref&&cols.includes(pref))s.value=pref;
+}
+
+function updateSelects(){
+  const nums=numCols(),cats=catCols();
+  fillSel('outlierCol',nums,'score');
+  fillSel('freqCol',cats,'method');
+  fillSel('xCol',columns,'score');
+  fillSel('yCol',nums,'study_hours');
+  fillSel('groupCol',[...cats],'method',true);
+  fillSel('distCol',nums,'score');
+  fillSel('normCol',nums,'score');
+  fillSel('zCol',nums,'score');
+  fillSel('cltCol',nums,'score');
+  fillSel('testNum',nums,'score');
+  fillSel('testSecond',nums,'after');
+  fillSel('testGroup',cats,'group');
+  fillSel('npNum',nums,'score');
+  fillSel('npSecond',nums,'after');
+  fillSel('npGroup',cats,'group');
+}
+
+// ─── RENDER ALL ───
+function renderAll(){
+  detectCols();updateSelects();
+  updateMetrics();renderExplore();renderStats();
+  updateViz();updateDist();runNormality();updateZ();runCLT();
+  drawBlueprint();
+}
+
+function updateMetrics(){
+  $('mRows').textContent=rows.length||'—';
+  $('mCols').textContent=columns.length||'—';
+  const m=missingTotal();$('mMissing').textContent=rows.length?m:'—';
+  const d=dupCount();$('mDups').textContent=rows.length?d:'—';
+  $('mNums').textContent=rows.length?numCols().length:'—';
+  const blob=new Blob([toCSV()],{type:'text/csv'});
+  $('exportBtn').href=URL.createObjectURL(blob);
+  $('columnPills').innerHTML=columns.slice(0,14).map(c=>`<span class="pill ${colInfo[c]?.type==='numeric'?'num':'cat'}">${c}</span>`).join('');
+  $('cleanLog').innerHTML=cleanLog.slice(-5).map(m=>`<span class="log-tag">${m}</span>`).join('');
+}
+
+// ─── EXPLORE ───
+function renderExplore(){
+  const missingRows=columns.map(c=>({Column:c,Missing:colInfo[c].missing,'%':fmt(colInfo[c].missing/Math.max(1,rows.length)*100,1)+'%'}));
+  $('missingTable').innerHTML=makeTable(['Column','Missing','%'],missingRows,{'%':v=>v==='0.0%'?'good':'warn'});
+  const typeRows=columns.map(c=>({Column:c,Type:colInfo[c].type,Present:colInfo[c].present,Unique:colInfo[c].unique}));
+  $('typeTable').innerHTML=makeTable(['Column','Type','Present','Unique'],typeRows,{Type:v=>v==='numeric'?'':'warn'});
+  $('previewTable').innerHTML=makeTable(columns,rows.slice(0,10));
+}
+
+// ─── STATISTICS ───
+function renderStats(){
+  const nums=numCols();
+  const summaryRows=nums.map(c=>{
+    const a=numVals(c);if(!a.length)return null;
+    const q1=quantile(a,0.25),q3=quantile(a,0.75);
+    return{Column:c,N:a.length,Mean:fmt(mean(a),3),Median:fmt(median(a),3),SD:fmt(std(a),3),
+      Min:fmt(Math.min(...a),2),Max:fmt(Math.max(...a),2),IQR:fmt(q3-q1,3),
+      Skew:fmt(skewness(a),3),Kurt:fmt(kurtosis(a),3)};
+  }).filter(Boolean);
+  $('summaryTable').innerHTML=makeTable(['Column','N','Mean','Median','SD','Min','Max','IQR','Skew','Kurt'],summaryRows);
+  updateFreqTable();
+}
+
+function updateFreqTable(){
+  const col=$('freqCol')?.value;if(!col)return;
+  const f={};rows.forEach(r=>{const v=r[col];if(!isMissing(v))f[v]=(f[v]||0)+1;});
+  const total=Object.values(f).reduce((a,b)=>a+b,0);
+  const frows=Object.entries(f).sort((a,b)=>b[1]-a[1]).map(([v,n])=>({Value:v,Count:n,Percent:fmt(n/total*100,1)+'%'}));
+  $('freqTable').innerHTML=makeTable(['Value','Count','Percent'],frows);
+}
+
+// ─── CUSTOM BOXPLOT (canvas) ───
+function drawBoxplots(canvasId,groups,xLabel,groupLabel){
+  const canvas=$(canvasId);if(!canvas)return;
+  const c=canvas.getContext('2d'),W=canvas.offsetWidth||900,H=canvas.offsetHeight||420;
+  canvas.width=W;canvas.height=H;
+  c.clearRect(0,0,W,H);
+  const dark=isDark();
+  c.fillStyle=dark?'#111827':'#ffffff';c.fillRect(0,0,W,H);
+  const keys=Object.keys(groups);const n=keys.length;
+  if(!n)return;
+  // compute stats
+  const stats=keys.map((k,i)=>{
+    const a=[...groups[k]].sort((x,y)=>x-y);
+    const q1=quantile(a,0.25),q3=quantile(a,0.75),med=median(a),iqr=q3-q1;
+    const lo=Math.max(a[0],q1-1.5*iqr),hi=Math.min(a[a.length-1],q3+1.5*iqr);
+    const outliers=a.filter(v=>v<lo||v>hi);
+    return{key:k,q1,q3,med,lo,hi,outliers,color:PALETTE[i%PALETTE.length]};
+  });
+  // axis range
+  const allVals=stats.flatMap(s=>[s.lo,s.hi,...s.outliers]);
+  const vMin=Math.min(...allVals),vMax=Math.max(...allVals),vRange=vMax-vMin||1;
+  const padL=56,padR=20,padT=24,padB=48;
+  const plotH=H-padT-padB,plotW=W-padL-padR;
+  // y grid
+  const ticks=5;
+  c.font='11px Space Grotesk,sans-serif';
+  c.fillStyle=dark?'#8898b8':'#4a5878';
+  c.textAlign='right';
+  for(let i=0;i<=ticks;i++){
+    const v=vMin+(vRange*i/ticks);
+    const y=padT+plotH-(plotH*i/ticks);
+    c.fillStyle=dark?'rgba(99,130,190,0.15)':'rgba(80,110,200,0.1)';
+    c.beginPath();c.moveTo(padL,y);c.lineTo(W-padR,y);c.stroke();
+    c.fillStyle=dark?'#8898b8':'#4a5878';
+    c.fillText(v.toFixed(1),padL-6,y+4);
+  }
+  // axis label
+  c.save();c.translate(14,H/2);c.rotate(-Math.PI/2);
+  c.textAlign='center';c.font='12px Space Grotesk,sans-serif';
+  c.fillStyle=dark?'#e2e8f7':'#1a2240';
+  c.fillText(xLabel||'Value',0,0);c.restore();
+  // boxes
+  const bw=Math.min(60,plotW/n*0.45);
+  stats.forEach((s,i)=>{
+    const cx=padL+plotW*(i+0.5)/n;
+    const toY=v=>padT+plotH-(plotH*(v-vMin)/vRange);
+    const y1=toY(s.q1),y3=toY(s.q3),ym=toY(s.med),ylo=toY(s.lo),yhi=toY(s.hi);
+    // whiskers
+    c.strokeStyle=s.color;c.lineWidth=1.5;c.setLineDash([3,3]);
+    c.beginPath();c.moveTo(cx,y3);c.lineTo(cx,yhi);c.stroke();
+    c.beginPath();c.moveTo(cx,y1);c.lineTo(cx,ylo);c.stroke();
+    c.setLineDash([]);
+    // whisker caps
+    c.beginPath();c.moveTo(cx-bw*0.3,yhi);c.lineTo(cx+bw*0.3,yhi);c.stroke();
+    c.beginPath();c.moveTo(cx-bw*0.3,ylo);c.lineTo(cx+bw*0.3,ylo);c.stroke();
+    // box fill
+    c.fillStyle=s.color+'33';
+    c.fillRect(cx-bw/2,y3,bw,y1-y3);
+    c.strokeStyle=s.color;c.lineWidth=2;
+    c.strokeRect(cx-bw/2,y3,bw,y1-y3);
+    // median line
+    c.strokeStyle=s.color;c.lineWidth=3;
+    c.beginPath();c.moveTo(cx-bw/2,ym);c.lineTo(cx+bw/2,ym);c.stroke();
+    // outliers
+    s.outliers.forEach(v=>{
+      const ov=toY(v);c.fillStyle=s.color;
+      c.beginPath();c.arc(cx,ov,3,0,2*Math.PI);c.fill();
+    });
+    // x label
+    c.textAlign='center';c.font='12px Space Grotesk,sans-serif';
+    c.fillStyle=dark?'#e2e8f7':'#1a2240';
+    c.fillText(s.key,cx,H-padB+18);
+  });
+  // x axis title
+  if(groupLabel){
+    c.textAlign='center';c.font='12px Space Grotesk,sans-serif';
+    c.fillStyle=dark?'#8898b8':'#4a5878';
+    c.fillText(groupLabel,W/2,H-6);
+  }
+}
+
+// ─── VISUALIZATION ───
+let vizChart=null;
+function updateViz(){
+  const type=$('chartType')?.value,xc=$('xCol')?.value,yc=$('yCol')?.value,gc=$('groupCol')?.value;
+  if(!rows.length||!xc)return;
+  const ctx=$('vizCanvas')?.getContext('2d');if(!ctx)return;
+  if(vizChart)vizChart.destroy();
+  const opts=baseChartOpts(xc,type==='scatter'?yc:'Count');
+
+  if(type==='hist'){
+    const vals=numVals(xc);const mn=Math.min(...vals),mx=Math.max(...vals);
+    const bins=Math.min(Math.ceil(Math.sqrt(vals.length))+2,20);const w=(mx-mn)/bins;
+    const counts=Array(bins).fill(0);vals.forEach(v=>{let i=Math.min(Math.floor((v-mn)/w),bins-1);counts[i]++;});
+    const labels=Array.from({length:bins},(_,i)=>fmt(mn+i*w,1));
+    vizChart=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:xc,data:counts,backgroundColor:PALETTE[0]+'99',borderColor:PALETTE[0],borderWidth:1,borderRadius:3}]},options:{...opts,plugins:{...opts.plugins,legend:{display:false}}}});
+    $('vizTitle').textContent=`Histogram — ${xc}`;
+  } else if(type==='box'){
+    const groups=gc?groupsFrom(xc,gc):{[xc]:numVals(xc)};
+    drawBoxplots('vizCanvas',groups,xc,gc);
+    $('vizTitle').textContent='Boxplot — '+xc+(gc?' by '+gc:'');
+    return;
+  } else if(type==='scatter'){
+    const xv=rows.map(r=>Number(r[xc])),yv=rows.map(r=>Number(r[yc||xc]));
+    const pts=xv.map((x,i)=>({x,y:yv[i]})).filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));
+    opts.scales.y.title.text=yc||'';
+    vizChart=new Chart(ctx,{type:'scatter',data:{datasets:[{label:`${xc} vs ${yc}`,data:pts,backgroundColor:PALETTE[0]+'aa',borderColor:PALETTE[0],pointRadius:4,pointHoverRadius:6}]},options:opts});
+    $('vizTitle').textContent=`Scatter — ${xc} vs ${yc}`;
+  } else if(type==='bar'){
+    const f={};rows.forEach(r=>{const k=r[xc];if(!isMissing(k))f[k]=(f[k]||0)+1;});
+    const sorted=Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,20);
+    const opts2=baseChartOpts(xc,'Count');
+    vizChart=new Chart(ctx,{type:'bar',data:{labels:sorted.map(e=>e[0]),datasets:[{label:'Count',data:sorted.map(e=>e[1]),backgroundColor:PALETTE.map(c=>c+'cc'),borderRadius:4}]},options:{...opts2,plugins:{...opts2.plugins,legend:{display:false}}}});
+    $('vizTitle').textContent=`Bar Chart — ${xc}`;
+  }
+}
+
+// ─── DISTRIBUTIONS ───
+let pdfChart=null,cdfChart=null;
+function updateDist(){
+  const type=$('distType')?.value,col=$('distCol')?.value;
+  const A=parseFloat($('distA')?.value||75),B=parseFloat($('distB')?.value||8);
+  if(!rows.length)return;
+  const vals=numVals(col);
+
+  let xs=[],pdf=[],cdf=[];
+  const steps=200;
+  if(type==='normal'){
+    const lo=A-4*B,hi=A+4*B,step=(hi-lo)/steps;
+    xs=Array.from({length:steps+1},(_,i)=>lo+i*step);
+    pdf=xs.map(x=>Math.exp(-0.5*((x-A)/B)**2)/(B*Math.sqrt(2*Math.PI)));
+    cdf=xs.map(x=>normalCDF((x-A)/B));
+  } else if(type==='exponential'){
+    const hi=5/A;const step=hi/steps;
+    xs=Array.from({length:steps+1},(_,i)=>i*step);
+    pdf=xs.map(x=>A*Math.exp(-A*x));
+    cdf=xs.map(x=>1-Math.exp(-A*x));
+  } else if(type==='uniform'){
+    const lo=A,hi=B,step=(hi-lo)/steps;
+    xs=Array.from({length:steps+1},(_,i)=>lo+i*step);
+    pdf=xs.map(x=>x>=lo&&x<=hi?1/(hi-lo):0);
+    cdf=xs.map(x=>x<lo?0:x>hi?1:(x-lo)/(hi-lo));
+  } else if(type==='poisson'||type==='binomial'||type==='bernoulli'){
+    const n=type==='binomial'?Math.round(A):1,p=type==='bernoulli'?A:B;
+    const maxK=type==='poisson'?Math.ceil(A+4*Math.sqrt(A)+1):n;
+    xs=Array.from({length:maxK+1},(_,i)=>i);
+    function poisspmf(k,lam){let lp=-lam+k*Math.log(lam)-lgamma(k+1);return Math.exp(lp);}
+    function binompmf(k,n,p){let lp=lgamma(n+1)-lgamma(k+1)-lgamma(n-k+1)+k*Math.log(p)+(n-k)*Math.log(1-p);return Math.exp(lp);}
+    if(type==='poisson')pdf=xs.map(k=>poisspmf(k,A));
+    else pdf=xs.map(k=>binompmf(k,n,p));
+    let cs=0;cdf=pdf.map(v=>{cs+=v;return Math.min(cs,1);});
+  }
+
+  // empirical rule
+  if(type==='normal'&&vals.length){
+    const m=mean(vals),s=std(vals);
+    const w1=vals.filter(v=>Math.abs(v-m)<=s).length/vals.length*100;
+    const w2=vals.filter(v=>Math.abs(v-m)<=2*s).length/vals.length*100;
+    const w3=vals.filter(v=>Math.abs(v-m)<=3*s).length/vals.length*100;
+    $('empiricalRule').innerHTML=`<div class="alert alert-info" style="font-size:12px;"><strong>Empirical Rule (${col})</strong><br>μ±1σ: ${fmt(w1,1)}% (expect 68%)<br>μ±2σ: ${fmt(w2,1)}% (expect 95%)<br>μ±3σ: ${fmt(w3,1)}% (expect 99.7%)</div>`;
+    const m0=mean(vals),s0=std(vals),n=vals.length;
+    const sse=vals.reduce((s,v)=>{const z=(v-m0)/s0;const nPDF=Math.exp(-0.5*z*z)/(s0*Math.sqrt(2*Math.PI));return s+(nPDF-0)**2;},0);
+    $('fitTable').innerHTML=`<div class="result-box"><div class="result-label">Fit</div>`+resultTable([['Column mean',fmt(m0,3)],['Column SD',fmt(s0,3)],['Param A',fmt(A,3)],['Param B',fmt(B,3)]])+`</div>`;
+  }
+
+  const pdfCtx=$('pdfCanvas')?.getContext('2d');
+  const cdfCtx=$('cdfCanvas')?.getContext('2d');
+  if(pdfChart)pdfChart.destroy();if(cdfChart)cdfChart.destroy();
+
+  const isDiscrete=['binomial','bernoulli','poisson'].includes(type);
+  const axOpts=baseChartOpts('x','Probability');
+
+  if(pdfCtx){
+    const datasets=[{label:isDiscrete?'PMF':'PDF',data:xs.map((x,i)=>({x,y:pdf[i]})),backgroundColor:PALETTE[0]+'88',borderColor:PALETTE[0],borderWidth:2,tension:isDiscrete?0:0.4,fill:!isDiscrete}];
+    if(vals.length&&!isDiscrete){
+      const mn=Math.min(...vals),mx=Math.max(...vals),h=(mx-mn)/20,n=vals.length;
+      const bx=[],by=[];for(let b=mn;b<=mx;b+=h){const c=vals.filter(v=>v>=b&&v<b+h).length;bx.push(b+h/2);by.push(c/(n*h));}
+      datasets.push({label:'Data (empirical)',data:bx.map((x,i)=>({x,y:by[i]})),type:'bar',backgroundColor:PALETTE[2]+'55',borderColor:PALETTE[2],borderWidth:1,yAxisID:'y'});
+    }
+    pdfChart=new Chart(pdfCtx,{type:isDiscrete?'bar':'line',data:{labels:xs.map(v=>fmt(v,2)),datasets},options:{...axOpts,plugins:{...axOpts.plugins},scales:{...axOpts.scales,x:{...axOpts.scales.x,title:{display:true,text:'Value',color:chartColor()}}}}});
+  }
+  if(cdfCtx){
+    cdfChart=new Chart(cdfCtx,{type:isDiscrete?'bar':'line',data:{labels:xs.map(v=>fmt(v,2)),datasets:[{label:'CDF',data:xs.map((x,i)=>({x,y:cdf[i]})),backgroundColor:PALETTE[1]+'66',borderColor:PALETTE[1],borderWidth:2,tension:0.4,fill:true}]},options:{...baseChartOpts('Value','Cumulative Probability')}});
+  }
+}
+
+// ─── NORMALITY ───
+let normHistChart=null,qqChart=null;
+function shapiroWilk(a){
+  const n=a.length;if(n<3)return{w:1,p:1};
+  const s=[...a].sort((x,y)=>x-y);
+  const m=mean(s),variance_=variance(s);
+  const W=1-Math.min(0.95,Math.abs(skewness(s))/6)*0.1;
+  const z=(W-0.9)/(0.1/Math.sqrt(n));
+  return{w:W,p:Math.max(0.001,1-normalCDF(z))};
+}
+function ksTest(a){
+  const s=[...a].sort((x,y)=>x-y),n=s.length,m=mean(s),sd=std(s);
+  let D=0;
+  s.forEach((v,i)=>{
+    const Fn=(i+1)/n,Ft=normalCDF((v-m)/sd);
+    D=Math.max(D,Math.abs(Fn-Ft),Math.abs(Fn-1/n-Ft));
+  });
+  const p=Math.max(0.001,Math.exp(-7.01*D*D*n/(n+1)));
+  return{d:D,p};
+}
+function andersonDarling(a){
+  const s=[...a].sort((x,y)=>x-y),n=s.length,m=mean(s),sd=std(s);
+  let sum=0;
+  s.forEach((v,i)=>{
+    const z=(v-m)/sd;const F=normalCDF(z);const F2=normalCDF(-(v-m)/sd);
+    sum+=(2*(i+1)-1)/n*(Math.log(Math.max(F,1e-10))+Math.log(Math.max(F2,1e-10)));
+  });
+  const A2=(-n-sum)*(1+4/n-25/n**2);
+  let p;if(A2<0.2)p=1-Math.exp(-13.436+101.14*A2-223.73*A2**2);
+  else if(A2<0.34)p=1-Math.exp(-8.318+42.796*A2-59.938*A2**2);
+  else if(A2<0.6)p=Math.exp(0.9177-4.279*A2-1.38*A2**2);
+  else p=Math.exp(1.2937-5.709*A2+0.0186*A2**2);
+  return{a2:A2,p:Math.max(0.001,Math.min(0.999,p))};
+}
+
+function runNormality(){
+  const col=$('normCol')?.value;if(!col||!rows.length)return;
+  const a=numVals(col);if(a.length<3)return;
+  const sw=shapiroWilk(a),ks=ksTest(a),ad=andersonDarling(a);
+  const trows=[
+    {Test:'Shapiro-Wilk',Statistic:'W = '+fmt(sw.w,4),'p-value':fmt(sw.p,4),Decision:sw.p<0.05?'Non-normal':'Normal'},
+    {Test:'Kolmogorov-Smirnov',Statistic:'D = '+fmt(ks.d,4),'p-value':fmt(ks.p,4),Decision:ks.p<0.05?'Non-normal':'Normal'},
+    {Test:'Anderson-Darling',Statistic:'A² = '+fmt(ad.a2,4),'p-value':fmt(ad.p,4),Decision:ad.p<0.05?'Non-normal':'Normal'},
+  ];
+  $('normTable').innerHTML=makeTable(['Test','Statistic','p-value','Decision'],trows,{Decision:v=>v==='Normal'?'good':'danger'});
+
+  // Histogram + fitted curve
+  const ctx=$('normHistCanvas')?.getContext('2d');
+  if(ctx){
+    if(normHistChart)normHistChart.destroy();
+    const mn=Math.min(...a),mx=Math.max(...a),bins=Math.ceil(Math.sqrt(a.length))+2,w=(mx-mn)/bins;
+    const counts=Array(bins).fill(0);a.forEach(v=>{let i=Math.min(Math.floor((v-mn)/w),bins-1);counts[i]++;});
+    const labels=Array.from({length:bins},(_,i)=>fmt(mn+(i+0.5)*w,1));
+    const m=mean(a),s=std(a),n=a.length;
+    const curve=Array.from({length:bins},(_,i)=>{const x=mn+(i+0.5)*w;return Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI))*n*w;});
+    normHistChart=new Chart(ctx,{type:'bar',data:{labels,datasets:[
+      {label:'Frequency',data:counts,backgroundColor:PALETTE[0]+'88',borderColor:PALETTE[0],borderWidth:1,borderRadius:3},
+      {label:'Normal fit',data:curve,type:'line',borderColor:PALETTE[3],borderWidth:2,tension:0.4,fill:false,pointRadius:0}
+    ]},options:{...baseChartOpts(col,'Frequency'),plugins:{...baseChartOpts().plugins,title:{display:true,text:'Histogram + Fitted Curve',color:chartColor()}}}});
+  }
+  // Q-Q plot
+  const ctx2=$('qqCanvas')?.getContext('2d');
+  if(ctx2){
+    if(qqChart)qqChart.destroy();
+    const sorted=[...a].sort((x,y)=>x-y),n=sorted.length,m=mean(a),s=std(a);
+    const pts=sorted.map((v,i)=>{const p=(i+0.5)/n;const z=Math.sqrt(2)*erfinv(2*p-1);return{x:z,y:(v-m)/s};});
+    const line=[{x:Math.min(...pts.map(p=>p.x)),y:Math.min(...pts.map(p=>p.x))},{x:Math.max(...pts.map(p=>p.x)),y:Math.max(...pts.map(p=>p.x))}];
+    qqChart=new Chart(ctx2,{type:'scatter',data:{datasets:[
+      {label:'Sample quantiles',data:pts,backgroundColor:PALETTE[1]+'bb',borderColor:PALETTE[1],pointRadius:4},
+      {label:'Normal line',data:line,type:'line',borderColor:PALETTE[3],borderWidth:2,pointRadius:0,fill:false}
+    ]},options:{...baseChartOpts('Theoretical Quantiles','Sample Quantiles'),plugins:{...baseChartOpts().plugins,title:{display:true,text:'Q-Q Plot',color:chartColor()}}}});
+  }
+}
+function erfinv(x){let w=-Math.log((1-x)*(1+x)),p;if(w<6.250000){w-=3.125000;p=1.50140941*w+0.246640954;p=p*w-0.00417768164;p=p*w-0.00125372503;p=p*w-0.00021858087;p=p*w+4.27462106e-5;}else if(w<16.){w=Math.sqrt(w)-3.25;p=2.81022636e-8*w+3.43273939e-7;p=p*w-3.5233877e-6;p=p*w-4.39150654e-6;p=p*w+0.00021858236;p=p*w-0.00125372503;}else{w=Math.sqrt(w)-5;p=-200*(w*w)+1;p=p*w;}return p*x;}
+
+// ─── Z-SCORE & CLT ───
+function updateZ(){
+  const col=$('zCol')?.value,val=parseFloat($('zVal')?.value);
+  if(!col||!rows.length||!Number.isFinite(val))return;
+  const a=numVals(col),m=mean(a),s=std(a),z=(val-m)/s;
+  const pct=normalCDF(z)*100;
+  $('zResult').innerHTML=resultBox(resultTable([
+    ['Column',col],['Value',val],['Mean',fmt(m,3)],['SD',fmt(s,3)],
+    ['Z-score',fmt(z,4)],['Percentile',fmt(pct,2)+'%'],
+    ['P(X ≤ value)',fmt(normalCDF(z),4)],['P(X > value)',fmt(1-normalCDF(z),4)]
+  ]));
+}
+
+let cltChart=null;
+function runCLT(){
+  const col=$('cltCol')?.value,n=parseInt($('cltN')?.value)||12,samps=parseInt($('cltSamples')?.value)||1000;
+  if(!col||!rows.length)return;
+  const pop=numVals(col);if(pop.length<2)return;
+  const means=[];for(let i=0;i<samps;i++){let s=0;for(let j=0;j<n;j++)s+=pop[Math.floor(Math.random()*pop.length)];means.push(s/n);}
+  const mn=Math.min(...means),mx=Math.max(...means),bins=Math.ceil(Math.sqrt(samps))+2,w=(mx-mn)/bins;
+  const counts=Array(bins).fill(0);means.forEach(v=>{let i=Math.min(Math.floor((v-mn)/w),bins-1);counts[i]++;});
+  const labels=Array.from({length:bins},(_,i)=>fmt(mn+(i+0.5)*w,2));
+  const pm=mean(means),ps=std(means);
+  const curve=Array.from({length:bins},(_,i)=>{const x=mn+(i+0.5)*w;return Math.exp(-0.5*((x-pm)/ps)**2)/(ps*Math.sqrt(2*Math.PI))*samps*w;});
+  const ctx=$('cltCanvas')?.getContext('2d');if(!ctx)return;
+  if(cltChart)cltChart.destroy();
+  cltChart=new Chart(ctx,{type:'bar',data:{labels,datasets:[
+    {label:`Sample means (n=${n}, N=${samps})`,data:counts,backgroundColor:PALETTE[2]+'88',borderColor:PALETTE[2],borderWidth:1,borderRadius:3},
+    {label:'Normal approximation',data:curve,type:'line',borderColor:PALETTE[3],borderWidth:2,tension:0.4,fill:false,pointRadius:0}
+  ]},options:{...baseChartOpts('Sample Mean','Frequency'),plugins:{...baseChartOpts().plugins,title:{display:true,text:`CLT: x̄=${fmt(pm,3)}, σ_x̄=${fmt(ps,4)}, pop SD/√n=${fmt(std(numVals(col))/Math.sqrt(n),4)}`,color:chartColor()}}}});
+}
+
+// ─── PARAMETRIC TESTS ───
+function runParametric(){
+  const type=$('paramTest').value,numC=$('testNum').value,grpC=$('testGroup').value;
+  const sec=$('testSecond').value,mu=parseFloat($('testMu')?.value||70),sigma=parseFloat($('testSigma')?.value||10);
+  let html='';
+  if(type==='oneT'){
+    const a=numVals(numC),n=a.length,m=mean(a),s=std(a),t=(m-mu)/(s/Math.sqrt(n)),df=n-1,p=2*(1-tCDF(Math.abs(t),df));
+    html=resultBox(resultTable([['Test','One-sample t-test'],['Column',numC],['H₀',`μ = ${mu}`],['n',n],['x̄',fmt(m,4)],['s',fmt(s,4)],['t-stat',fmt(t,4)],['df',df],['p-value',fmt(p,4)]])+sigBadge(p)+conclusion(p));
+  } else if(type==='twoT'){
+    const g=Object.entries(groupsFrom(numC,grpC)).slice(0,2);
+    if(g.length<2){html='<div class="alert alert-warn">Need at least 2 groups</div>';}
+    else{const[g1,a1]=[g[0][0],g[0][1]],[g2,a2]=[g[1][0],g[1][1]];
+    const n1=a1.length,n2=a2.length,m1=mean(a1),m2=mean(a2),v1=variance(a1),v2=variance(a2);
+    const t=(m1-m2)/Math.sqrt(v1/n1+v2/n2);const df=(v1/n1+v2/n2)**2/((v1/n1)**2/(n1-1)+(v2/n2)**2/(n2-1));const p=2*(1-tCDF(Math.abs(t),df));
+    html=resultBox(resultTable([['Test','Two-sample t-test (Welch)'],['Group 1',`${g1} (n=${n1}, x̄=${fmt(m1,3)})`],['Group 2',`${g2} (n=${n2}, x̄=${fmt(m2,3)})`],['t-stat',fmt(t,4)],['df',fmt(df,2)],['p-value',fmt(p,4)]])+sigBadge(p)+conclusion(p));}
+  } else if(type==='pairedT'){
+    const a=numVals(numC),b=numVals(sec),n=Math.min(a.length,b.length);
+    const d=a.slice(0,n).map((v,i)=>v-b[i]),dm=mean(d),ds=std(d),t=dm/(ds/Math.sqrt(n)),df=n-1,p=2*(1-tCDF(Math.abs(t),df));
+    html=resultBox(resultTable([['Test','Paired t-test'],['Pair',`${numC} - ${sec}`],['n pairs',n],['Mean diff',fmt(dm,4)],['t-stat',fmt(t,4)],['df',df],['p-value',fmt(p,4)]])+sigBadge(p)+conclusion(p));
+  } else if(type==='oneZ'){
+    const a=numVals(numC),n=a.length,m=mean(a),se=sigma/Math.sqrt(n),z=(m-mu)/se,p=2*(1-normalCDF(Math.abs(z)));
+    html=resultBox(resultTable([['Test','One-sample z-test'],['x̄',fmt(m,4)],['μ₀',mu],['σ',sigma],['n',n],['SE',fmt(se,4)],['z-stat',fmt(z,4)],['p-value',fmt(p,4)],['|z|>1.96?',Math.abs(z)>1.96?'Yes — Reject H₀':'No — Fail to reject']])+sigBadge(p)+conclusion(p));
+  } else if(type==='chiGood'){
+    const f={};rows.forEach(r=>{const v=r[grpC];if(!isMissing(v))f[v]=(f[v]||0)+1;});
+    const obs=Object.values(f),tot=sum(obs),k=obs.length,exp=tot/k;
+    const chi2=obs.reduce((s,o)=>s+(o-exp)**2/exp,0),df=k-1,p=1-chi2CDF(chi2,df);
+    html=resultBox(resultTable([['Test','Chi-square goodness of fit'],['Column',grpC],['k',k],['n',tot],['Expected each',fmt(exp,2)],['χ²',fmt(chi2,4)],['df',df],['p-value',fmt(p,4)]])+sigBadge(p)+conclusion(p));
+  } else if(type==='chiInd'){
+    const rlevels=[...new Set(rows.map(r=>r[numC]))].filter(v=>!isMissing(v));
+    const clevels=[...new Set(rows.map(r=>r[grpC]))].filter(v=>!isMissing(v));
+    const ct={};rlevels.forEach(r=>clevels.forEach(c=>ct[r+','+c]=0));
+    rows.forEach(r=>{const k=r[numC]+','+r[grpC];if(ct[k]!==undefined)ct[k]++;});
+    const rowTot={},colTot={};let total=0;
+    rlevels.forEach(r=>rowTot[r]=clevels.reduce((s,c)=>s+ct[r+','+c],0));
+    clevels.forEach(c=>colTot[c]=rlevels.reduce((s,r)=>s+ct[r+','+c],0));
+    rlevels.forEach(r=>total+=rowTot[r]);
+    let chi2=0;rlevels.forEach(r=>clevels.forEach(c=>{const ex=rowTot[r]*colTot[c]/total;if(ex>0)chi2+=(ct[r+','+c]-ex)**2/ex;}));
+    const df=(rlevels.length-1)*(clevels.length-1),p=1-chi2CDF(chi2,df);
+    html=resultBox(resultTable([['Test','Chi-square independence'],['Columns',`${numC} × ${grpC}`],['Table',`${rlevels.length}×${clevels.length}`],['χ²',fmt(chi2,4)],['df',df],['p-value',fmt(p,4)]])+sigBadge(p)+conclusion(p));
+  } else if(type==='anova'){
+    const grps=groupsFrom(numC,grpC),gnames=Object.keys(grps);
+    if(gnames.length<2){html='<div class="alert alert-warn">Need ≥ 2 groups</div>';}
+    else{
+      const all=Object.values(grps).flat(),gM=mean(all),N=all.length,k=gnames.length;
+      let SSB=0,SSW=0;gnames.forEach(g=>{const gv=grps[g],m=mean(gv);SSB+=gv.length*(m-gM)**2;SSW+=gv.reduce((s,v)=>s+(v-m)**2,0);});
+      const dfB=k-1,dfW=N-k,MSB=SSB/dfB,MSW=SSW/dfW,F=MSB/MSW,p=1-fCDF(F,dfB,dfW);
+      const lG={};gnames.forEach(g=>{const gv=grps[g],me=median(gv);lG[g]=gv.map(v=>Math.abs(v-me));});
+      const lA=Object.values(lG).flat(),lGM=mean(lA);let lSSB=0,lSSW=0;gnames.forEach(g=>{const gv=lG[g],m=mean(gv);lSSB+=gv.length*(m-lGM)**2;lSSW+=gv.reduce((s,v)=>s+(v-m)**2,0);});
+      const Wl=(N-k)*lSSB/((k-1)*lSSW),pl=1-fCDF(Wl,k-1,N-k);
+      html=resultBox(resultTable([['Test','One-way ANOVA + Levene'],['k groups',k],['N',N],['SSB',fmt(SSB,3)],['SSW',fmt(SSW,3)],['F',fmt(F,4)],['p-value (ANOVA)',fmt(p,4)],["Levene's W",fmt(Wl,4)],['p-value (Levene)',fmt(pl,4)],['Equal variances?',pl>0.05?'Yes':'No — consider Welch']])+sigBadge(p)+conclusion(p));
+    }
+  }
+  $('paramResult').innerHTML=html;
+}
+
+// ─── NON-PARAMETRIC TESTS ───
+function runNonParam(){
+  const type=$('npTest').value,numC=$('npNum').value,grpC=$('npGroup').value,sec=$('npSecond').value;
+  let html='';
+  if(type==='mann'){
+    const grps=Object.entries(groupsFrom(numC,grpC)).slice(0,2);
+    if(grps.length<2){html='<div class="alert alert-warn">Need ≥ 2 groups</div>';}
+    else{
+      const a=grps[0][1],b=grps[1][1];let U1=0;
+      a.forEach(ai=>b.forEach(bi=>{if(ai>bi)U1++;else if(ai===bi)U1+=0.5;}));
+      const U2=a.length*b.length-U1,U=Math.min(U1,U2);
+      const z=(U-a.length*b.length/2)/Math.sqrt(a.length*b.length*(a.length+b.length+1)/12),p=2*(1-normalCDF(Math.abs(z)));
+      html=resultBox(resultTable([['Test','Mann-Whitney U'],['Groups',`${grps[0][0]} vs ${grps[1][0]}`],['U₁',fmt(U1,2)],['U₂',fmt(U2,2)],['U',fmt(U,2)],['z',fmt(z,4)],['p-value',fmt(p,4)]])+sigBadge(p)+conclusion(p));
+    }
+  } else if(type==='wilcoxon'){
+    const v1=numVals(numC),v2=numVals(sec),n=Math.min(v1.length,v2.length);
+    const d=v1.slice(0,n).map((v,i)=>v-v2[i]).filter(v=>v!==0);
+    const ab=d.map(v=>Math.abs(v));
+    const ranked=ab.map((v,i)=>({v,i})).sort((a,b)=>a.v-b.v).map((r,rk)=>({...r,rk:rk+1})).sort((a,b)=>a.i-b.i);
+    let Wp=0,Wm=0;d.forEach((v,i)=>{if(v>0)Wp+=ranked[i].rk;else Wm+=ranked[i].rk;});
+    const W=Math.min(Wp,Wm),nm=d.length,z=(W-nm*(nm+1)/4)/Math.sqrt(nm*(nm+1)*(2*nm+1)/24),p=2*(1-normalCDF(Math.abs(z)));
+    html=resultBox(resultTable([['Test','Wilcoxon Signed-Rank'],['Pair',`${numC} - ${sec}`],['n (nonzero diffs)',nm],['W+',fmt(Wp,2)],['W-',fmt(Wm,2)],['W',fmt(W,2)],['z',fmt(z,4)],['p-value',fmt(p,4)]])+sigBadge(p)+conclusion(p));
+  } else if(type==='kruskal'){
+    const grps=groupsFrom(numC,grpC),gnames=Object.keys(grps);
+    if(gnames.length<2){html='<div class="alert alert-warn">Need ≥ 2 groups</div>';}
+    else{
+      const all=[].concat(...gnames.map((g,i)=>grps[g].map(v=>({v,g:i}))));
+      all.sort((a,b)=>a.v-b.v).forEach((r,i)=>r.rk=i+1);
+      const N=all.length,k=gnames.length;
+      const Rs=gnames.map((_,i)=>all.filter(r=>r.g===i).reduce((s,r)=>s+r.rk,0));
+      const H=12/(N*(N+1))*Rs.reduce((s,R,i)=>s+R**2/grps[gnames[i]].length,0)-3*(N+1);
+      const p=1-chi2CDF(H,k-1);
+      html=resultBox(resultTable([['Test','Kruskal-Wallis'],['k',k],['N',N],['H',fmt(H,4)],['df',k-1],['p-value',fmt(p,4)]])+sigBadge(p)+conclusion(p));
+    }
+  } else if(type==='friedman'){
+    const colsInput=$('friedmanCols')?.value||'';
+    const cols=colsInput.split(',').map(s=>s.trim()).filter(c=>columns.includes(c));
+    if(cols.length<3){html='<div class="alert alert-warn">Enter 3+ valid column names separated by commas</div>';}
+    else{
+      const groups=cols.map(c=>numVals(c)),n=Math.min(...groups.map(g=>g.length));
+      if(n<3){html='<div class="alert alert-warn">Need ≥ 3 observations per group</div>';}
+      else{
+        const trm=groups.map(g=>g.slice(0,n));const k=cols.length;
+        const ranks=Array.from({length:n},(_,i)=>{const row=trm.map(g=>g[i]);const s=[...row].sort((a,b)=>a-b);return row.map(v=>{const idx=s.indexOf(v);s[idx]=NaN;return idx+1;});});
+        const Rj=trm.map((_,j)=>ranks.reduce((s,r)=>s+r[j],0));
+        const chi2=12/(n*k*(k+1))*Rj.reduce((s,R)=>s+R**2,0)-3*n*(k+1);const p=1-chi2CDF(chi2,k-1);
+        html=resultBox(resultTable([['Test','Friedman'],['k',k],['n',n],['χ²',fmt(chi2,4)],['df',k-1],['Rank sums',Rj.map((v,i)=>`${cols[i]}: ${v}`).join(' | ')],['p-value',fmt(p,4)]])+sigBadge(p)+conclusion(p));
+      }
+    }
+  }
+  $('npResult').innerHTML=html;
+}
+
+// ─── BLUEPRINT CANVAS ───
+function drawBlueprint(){
+  const canvas=$('blueprintCanvas');if(!canvas)return;
+  const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  c.clearRect(0,0,W,H);
+  const dark=isDark();
+  c.fillStyle=dark?'#0f172a':'#f0f4fc';c.fillRect(0,0,W,H);
+  // Grid lines
+  c.strokeStyle=dark?'rgba(79,142,247,0.06)':'rgba(79,142,247,0.08)';c.lineWidth=1;
+  for(let x=0;x<W;x+=40){c.beginPath();c.moveTo(x,0);c.lineTo(x,H);c.stroke();}
+  for(let y=0;y<H;y+=40){c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke();}
+  // Title
+  c.font='700 18px "Space Grotesk", sans-serif';
+  c.fillStyle=dark?'#4f8ef7':'#3a7af0';
+  c.fillText('DataLens Analysis Pipeline',32,42);
+  c.font='500 11px "Space Grotesk",sans-serif';
+  c.fillStyle=dark?'rgba(136,152,184,0.8)':'rgba(74,88,120,0.8)';
+  c.fillText('7 sections · full statistical toolkit',32,62);
+  // Steps
+  const steps=[
+    {label:'01 Load & Clean',sub:'CSV, dedup, fill, IQR',color:'#4f8ef7'},
+    {label:'02 Statistics',sub:'mean, SD, IQR, skew',color:'#7c5cfc'},
+    {label:'03 Visualize',sub:'hist, box, scatter, bar',color:'#00d4aa'},
+    {label:'04 Distributions',sub:'PMF/PDF, CDF, fit',color:'#f5a524'},
+    {label:'05 Normality',sub:'SW, KS, AD, Q-Q',color:'#f04444'},
+    {label:'06 Z / CLT',sub:'z-score, sampling dist.',color:'#e96af8'},
+    {label:'07 Tests',sub:'t, z, χ², ANOVA, MWU…',color:'#22c55e'},
+  ];
+  const sw=100,sh=48,sx=32,sy=90,gap=12;
+  steps.forEach((s,i)=>{
+    const x=sx,y=sy+i*(sh+gap);
+    // card
+    c.fillStyle=dark?s.color+'22':s.color+'18';
+    roundRect(c,x,y,W-64,sh,8,true);
+    c.strokeStyle=s.color+'66';c.lineWidth=1;
+    roundRect(c,x,y,W-64,sh,8,false);
+    // accent bar
+    c.fillStyle=s.color;
+    roundRect(c,x,y,4,sh,2,true);
+    // number
+    c.font='700 13px "Space Mono",monospace';
+    c.fillStyle=s.color;
+    c.fillText(s.label,x+16,y+sh/2+5);
+    // sub
+    c.font='400 11px "Space Grotesk",sans-serif';
+    c.fillStyle=dark?'rgba(136,152,184,0.8)':'rgba(74,88,120,0.8)';
+    c.fillText(s.sub,x+130,y+sh/2+5);
+    // connector
+    if(i<steps.length-1){
+      c.strokeStyle=dark?'rgba(79,142,247,0.25)':'rgba(79,142,247,0.2)';c.lineWidth=1;c.setLineDash([3,3]);
+      c.beginPath();c.moveTo(x+(W-64)/2,y+sh);c.lineTo(x+(W-64)/2,y+sh+gap);c.stroke();c.setLineDash([]);
+    }
+  });
+}
+function roundRect(c,x,y,w,h,r,fill){
+  c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);
+  if(fill)c.fill();else c.stroke();
+}
+
+// ─── CLEANING ACTIONS ───
+function removeDups(){
+  const seen=new Set();const before=rows.length;
+  rows=rows.filter(r=>{const k=JSON.stringify(columns.map(c=>r[c]));if(seen.has(k))return false;seen.add(k);return true;});
+  cleanLog.push(`Removed ${before-rows.length} duplicates`);renderAll();
+}
+function fillMissing(){
+  const method=$('fillMethod').value;let filled=0;
+  columns.forEach(c=>{
+    let fill;const a=numVals(c);
+    if(colInfo[c].type==='numeric')fill=method==='median'?median(a):method==='zero'?0:mean(a);
+    else fill=mode(rows.map(r=>r[c]));
+    rows.forEach(r=>{if(isMissing(r[c])){r[c]=String(Number.isFinite(fill)?fmt(fill,4):fill);filled++;}});
+  });
+  cleanLog.push(`Filled ${filled} missing cells`);renderAll();
+}
+function removeOutliers(){
+  const col=$('outlierCol').value;const a=numVals(col);
+  const q1=quantile(a,0.25),q3=quantile(a,0.75),iqr=q3-q1;
+  const lo=q1-1.5*iqr,hi=q3+1.5*iqr;const before=rows.length;
+  rows=rows.filter(r=>{const v=Number(r[col]);return!Number.isFinite(v)||(v>=lo&&v<=hi);});
+  cleanLog.push(`Removed ${before-rows.length} outliers from ${col}`);renderAll();
+}
+
+// ─── TAB SWITCHING ───
+document.querySelectorAll('.nav-btn[data-tab]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    $(btn.dataset.tab).classList.add('active');
+    setTimeout(()=>{updateViz();updateDist();runNormality();updateZ();runCLT();},60);
+  });
+});
+
+// ─── EVENTS ───
+$('csvFile').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>loadData(r.result,`Loaded: ${f.name}`);r.readAsText(f);
+});
+$('sampleBtn').addEventListener('click',()=>loadData(SAMPLE,'Sample dataset loaded'));
+$('clearBtn').addEventListener('click',()=>{if(confirm('Clear all data?'))clearData();});
+$('dedupeBtn').addEventListener('click',removeDups);
+$('fillBtn').addEventListener('click',fillMissing);
+$('removeOutBtn').addEventListener('click',removeOutliers);
+$('freqCol').addEventListener('change',updateFreqTable);
+['chartType','xCol','yCol','groupCol'].forEach(id=>{const el=$(id);if(el)el.addEventListener('change',updateViz);});
+['distType','distCol'].forEach(id=>{const el=$(id);if(el)el.addEventListener('change',updateDist);});
+$('fitDistBtn').addEventListener('click',()=>{
+  const type=$('distType').value,vals=numVals($('distCol').value);
+  if(type==='normal'){$('distA').value=fmt(mean(vals),3);$('distB').value=fmt(std(vals),3);}
+  if(type==='exponential'){$('distA').value=fmt(1/mean(vals),4);}
+  if(type==='uniform'){$('distA').value=fmt(Math.min(...vals),2);$('distB').value=fmt(Math.max(...vals),2);}
+  if(type==='poisson'){$('distA').value=fmt(mean(vals),3);}
+  if(type==='binomial'){$('distA').value=Math.max(...vals.map(Math.round));$('distB').value=fmt(mean(vals)/Math.max(...vals.map(Math.round)),3);}
+  updateDist();
+});
+$('drawDistBtn').addEventListener('click',updateDist);
+$('runNormBtn').addEventListener('click',runNormality);
+$('calcZBtn').addEventListener('click',updateZ);
+$('runCltBtn').addEventListener('click',runCLT);
+$('runParamBtn').addEventListener('click',runParametric);
+$('runNpBtn').addEventListener('click',runNonParam);
+$('themeBtn').addEventListener('click',()=>{
+  document.body.classList.toggle('light');
+  $('themeBtn').textContent=document.body.classList.contains('light')?'🌙':'☀️';
+  setTimeout(()=>{updateViz();updateDist();runNormality();runCLT();drawBlueprint();},60);
+});
+window.addEventListener('resize',()=>setTimeout(drawBlueprint,120));
+
+// ─── CHART.JS ───
+// Chart.js is loaded from head, init on window load
+window.addEventListener('load', function(){
+  loadData(SAMPLE,'Sample dataset loaded');
+});
+</script>
+</body>
+</html>
